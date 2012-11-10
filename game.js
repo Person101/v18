@@ -1,15 +1,19 @@
+// Global variables
+var _3 = THREE;
 var renderer, scene, camera;
-
 var keyboard;
 
-var playerMesh;
 
-var _3 = THREE;
+var playerMesh;
+var jumpStatus = 'down';
+
 
 var camLight = {x:0,y:4,z:20};
 var sceneLight;
 
-var jumpStatus = 'down';
+
+var floorlevel = 0;
+var celinglevel = 10;
 
 function init() {
     var container = document.getElementById('gameContainer');
@@ -29,22 +33,23 @@ function init() {
 
 
 function animate() {
-    runFrame();
+    console.log("runframe");
+    moveElement();
+    movePlayer();
+    renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
-
-var moveObject = camLight;
 
 function jump() {
     console.log("JUMP");
 
     if (jumpStatus === 'down') {
         jumpStatus = 'up';
-        playerMesh.position.y = 6;
+        playerMesh.position.y = celinglevel;
     }
     else {
         jumpStatus = 'down';
-        playerMesh.position.y = 0;
+        playerMesh.position.y = floorlevel;
     }
 
 }
@@ -68,24 +73,9 @@ function jqueryKeyHandler(e) {
     }
 }
 
-function movePlayer() {
-
-    var move = 0.07;
-
-    if (keyboard.pressed('up')) {
-        playerMesh.position.z -= move;
-    }
-    if (keyboard.pressed('down')) {
-        playerMesh.position.z += move;
-    }
-    if (keyboard.pressed('left')) {
-        playerMesh.position.x -= move;
-    }
-    if (keyboard.pressed('right')) {
-        playerMesh.position.x += move;
-    }
-}
-
+//moveObject is a global associated with moveElement,
+//and is mostly a debugging tool
+var moveObject = camLight;
 function moveElement() {
     var move = 0.06;
 
@@ -111,17 +101,28 @@ function moveElement() {
         moveObject.z += move;
     }
 
-
     camera.position.set(camLight.x, camLight.y, camLight.z);
-
 }
 
-function runFrame() {
-    console.log("runframe");
-    moveElement();
-    movePlayer();
-    renderer.render(scene, camera);
+function movePlayer() {
+
+    var move = 0.07;
+
+    if (keyboard.pressed('up')) {
+        playerMesh.position.z -= move;
+    }
+    if (keyboard.pressed('down')) {
+        playerMesh.position.z += move;
+    }
+    if (keyboard.pressed('left')) {
+        playerMesh.position.x -= move;
+    }
+    if (keyboard.pressed('right')) {
+        playerMesh.position.x += move;
+    }
 }
+
+
 
 
 function setupScene(width, height) {
@@ -132,7 +133,6 @@ function setupScene(width, height) {
         scene.add(light);
         sceneLight = light;
     }
-
 
     scene = new _3.Scene();
     camera = new _3.PerspectiveCamera(45, width/height, 1, 10000);
@@ -193,10 +193,10 @@ function buildRoomGeometry() {
 
     //ceiling
     var celing = new _3.Geometry();
-    celing.vertices.push(new _3.Vector3(5,6,5));
-    celing.vertices.push(new _3.Vector3(5,6,-5));
-    celing.vertices.push(new _3.Vector3(-5,6,-5));
-    celing.vertices.push(new _3.Vector3(-5,6,5));
+    celing.vertices.push(new _3.Vector3(5,celinglevel,5));
+    celing.vertices.push(new _3.Vector3(5,celinglevel,-5));
+    celing.vertices.push(new _3.Vector3(-5,celinglevel,-5));
+    celing.vertices.push(new _3.Vector3(-5,celinglevel,5));
 
     celing.faces.push(new _3.Face4(0,1,2,3));
     celing.computeFaceNormals(); celing.computeVertexNormals();
