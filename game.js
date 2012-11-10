@@ -33,6 +33,10 @@ function animate() {
 
 var moveObject = camLight;
 
+function jump() {
+    console.log("JUMP");
+}
+
 function jqueryKeyHandler(e) {
     function swapLightCameraMove() {
         if (moveObject == camLight) {
@@ -45,6 +49,10 @@ function jqueryKeyHandler(e) {
 
     if (e.keyCode === 73) { // press i
         swapLightCameraMove();
+    }
+
+    if (e.keyCode === 90) { // press z
+        jump();
     }
 }
 
