@@ -9,6 +9,8 @@ var _3 = THREE;
 var camLight = {x:0,y:4,z:20};
 var sceneLight;
 
+var jumpStatus = 'down';
+
 function init() {
     var container = document.getElementById('gameContainer');
     setupScene(900,500);
@@ -35,6 +37,16 @@ var moveObject = camLight;
 
 function jump() {
     console.log("JUMP");
+
+    if (jumpStatus === 'down') {
+        jumpStatus = 'up';
+        playerMesh.position.y = 6;
+    }
+    else {
+        jumpStatus = 'down';
+        playerMesh.position.y = 0;
+    }
+
 }
 
 function jqueryKeyHandler(e) {
@@ -61,10 +73,10 @@ function movePlayer() {
     var move = 0.07;
 
     if (keyboard.pressed('up')) {
-        playerMesh.position.z += move;
+        playerMesh.position.z -= move;
     }
     if (keyboard.pressed('down')) {
-        playerMesh.position.z -= move;
+        playerMesh.position.z += move;
     }
     if (keyboard.pressed('left')) {
         playerMesh.position.x -= move;
