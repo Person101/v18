@@ -21,6 +21,7 @@ function init() {
     $('body').keydown(jqueryKeyHandler);
 
     buildRoomGeometry();
+    buildPlayerGeometry();
     animate();
 }
 
@@ -29,9 +30,6 @@ function animate() {
     runFrame();
     requestAnimationFrame(animate);
 }
-
-
-
 
 var moveObject = camLight;
 
@@ -47,6 +45,24 @@ function jqueryKeyHandler(e) {
 
     if (e.keyCode === 73) { // press i
         swapLightCameraMove();
+    }
+}
+
+function movePlayer() {
+
+    var move = 0.07;
+
+    if (keyboard.pressed('up')) {
+        playerMesh.position.z += move;
+    }
+    if (keyboard.pressed('down')) {
+        playerMesh.position.z -= move;
+    }
+    if (keyboard.pressed('left')) {
+        playerMesh.position.x -= move;
+    }
+    if (keyboard.pressed('right')) {
+        playerMesh.position.x += move;
     }
 }
 
@@ -83,6 +99,7 @@ function moveElement() {
 function runFrame() {
     console.log("runframe");
     moveElement();
+    movePlayer();
     renderer.render(scene, camera);
 }
 
@@ -90,7 +107,7 @@ function runFrame() {
 function setupScene(width, height) {
 
     function makeLight(x, y, z) {
-        var light = new _3.PointLight(0xff0000, 1.0);
+        var light = new _3.PointLight(0xffffff, 1.0);
         light.position.set(x,y,z);
         scene.add(light);
         sceneLight = light;
@@ -150,7 +167,7 @@ function buildRoomGeometry() {
 
     geo.computeFaceNormals();
     geo.computeVertexNormals();
-    var mesh = new _3.Mesh(geo, new _3.MeshLambertMaterial({color:0xffa0a0, side:_3.DoubleSide}));
+    var mesh = new _3.Mesh(geo, new _3.MeshLambertMaterial({color:0xff2020, side:_3.DoubleSide}));
     scene.add(mesh);
 
 
@@ -163,14 +180,14 @@ function buildRoomGeometry() {
 
     celing.faces.push(new _3.Face4(0,1,2,3));
     celing.computeFaceNormals(); celing.computeVertexNormals();
-    scene.add(new _3.Mesh(celing, new _3.MeshLambertMaterial({color:0xa0a0ff, side:_3.DoubleSide})));
+    scene.add(new _3.Mesh(celing, new _3.MeshLambertMaterial({color:0x2020ff, side:_3.DoubleSide})));
 
 }
 
 
 function buildPlayerGeometry() {
 
-    var geo = new _3.SphereGeometry(0.1, 20, 20);
+    var geo = new _3.SphereGeometry(0.3, 20, 20);
     var mat = new _3.MeshPhongMaterial({color:0x00ff00});
     playerMesh = new  _3.Mesh(geo, mat);
     scene.add(playerMesh);
