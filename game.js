@@ -2,8 +2,12 @@ var renderer, scene, camera;
 
 var keyboard;
 
+var playerMesh;
+
 var _3 = THREE;
+
 var camLight = {x:0,y:4,z:20};
+var sceneLight;
 
 function init() {
     var container = document.getElementById('gameContainer');
@@ -13,40 +17,64 @@ function init() {
 
     //get keyboard events
     keyboard = new THREEx.KeyboardState();
-
+    //and jquery for things that don't need to be per-frame
+    $('body').keydown(jqueryKeyHandler);
 
     buildRoomGeometry();
     animate();
 }
+
 
 function animate() {
     runFrame();
     requestAnimationFrame(animate);
 }
 
-function moveCamera() {
+
+
+
+var moveObject = camLight;
+
+function jqueryKeyHandler(e) {
+    function swapLightCameraMove() {
+        if (moveObject == camLight) {
+            moveObject = sceneLight.position;
+        }
+        else {
+            moveObject = camLight;
+        }
+    }
+
+    if (e.keyCode === 73) { // press i
+        swapLightCameraMove();
+    }
+}
+
+function moveElement() {
     var move = 0.06;
-    if (keyboard.pressed("up")) {
-        camLight.y += move;
+
+    if (keyboard.pressed("w")) {
+        moveObject.y += move;
     }
-    if (keyboard.pressed("down")) {
-        camLight.y -= move;
+    if (keyboard.pressed("s")) {
+        moveObject.y -= move;
     }
 
-    if (keyboard.pressed("left")) {
-        camLight.x -= move;
+    if (keyboard.pressed("a")) {
+        moveObject.x -= move;
     }
-    if (keyboard.pressed("right")) {
-        camLight.x += move;
-    }
-
-    if (keyboard.pressed("z")) {
-        camLight.z -= move;
+    if (keyboard.pressed("d")) {
+        moveObject.x += move;
     }
 
-    if (keyboard.pressed("x")) {
-        camLight.z += move;
+    if (keyboard.pressed("q")) {
+        moveObject.z -= move;
     }
+
+    if (keyboard.pressed("e")) {
+        moveObject.z += move;
+    }
+
 
     camera.position.set(camLight.x, camLight.y, camLight.z);
 
@@ -54,18 +82,33 @@ function moveCamera() {
 
 function runFrame() {
     console.log("runframe");
-
-    moveCamera();
+    moveElement();
     renderer.render(scene, camera);
 }
 
 
 function setupScene(width, height) {
+
+    function makeLight(x, y, z) {
+        var light = new _3.PointLight(0xff0000, 1.0);
+        light.position.set(x,y,z);
+        scene.add(light);
+        sceneLight = light;
+    }
+
+
     scene = new _3.Scene();
     camera = new _3.PerspectiveCamera(45, width/height, 1, 10000);
     camera.position.set(camLight.x, camLight.y, camLight.z);
 
 
+    var ambientLight = new _3.AmbientLight(0x909090);
+    scene.add(ambientLight);
+
+
+    makeLight(0,3,0);
+
+    /*
     var light = new _3.PointLight( 0xffffff, 1.0);
     light.position.set(0,1,0);
     scene.add(light);
@@ -73,10 +116,13 @@ function setupScene(width, height) {
     var light2 = new _3.PointLight(0xffffff, 0.5);
     light2.position.set(0,4,0);
     scene.add(light2);
+    */
 
+    /*
     var light3 = new _3.DirectionalLight(0xffffff, 1.0);
     light3.position.set(7,2,0);
     scene.add(light3);
+    */
 
     renderer = new _3.WebGLRenderer({antialias:true, clearColor: 0x000000, clearAlpha:1});
     renderer.setSize(width,height);
@@ -126,7 +172,8 @@ function buildPlayerGeometry() {
 
     var geo = new _3.SphereGeometry(0.1, 20, 20);
     var mat = new _3.MeshPhongMaterial({color:0x00ff00});
-
+    playerMesh = new  _3.Mesh(geo, mat);
+    scene.add(playerMesh);
 }
 
 
